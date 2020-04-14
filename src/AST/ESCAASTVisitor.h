@@ -6,7 +6,9 @@
 #include <clang/AST/Decl.h>
 
 #include "PathStorage.h"
-#include "../file.h"
+#include "../target/Context.h"
+#include "../SMT/Variable.h"
+#include "../SMT/VersionedVariable.h"
 
 
 class ESCAASTVisitor : public clang::RecursiveASTVisitor<ESCAASTVisitor>

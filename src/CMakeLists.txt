@@ -27,12 +27,15 @@ add_library(smt SHARED
         SMT/VersionedVariable.cpp
         )
 
+add_subdirectory(target)
+
 add_executable(ESCA main.cpp)
 
 
 target_link_libraries(ESCA
         LLVM
         ast
+        target
         fsm
         smt
         clangAST

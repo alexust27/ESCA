@@ -3,12 +3,9 @@
 #include <filesystem>
 
 #include "AST/ASTWalker.h"
-#include "file.h"
-
-namespace fs = std::filesystem;
+#include "target/Function.h"
 
 extern std::map<std::string, std::string> staticFuncMapping;
-
 
 int main( int argc, char **argv )
 {

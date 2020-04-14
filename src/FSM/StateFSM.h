@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <deque>
+#include <memory>
 
 #include "TypesFSM.h"
 #include "../SMT/FormulaSMT.h"
