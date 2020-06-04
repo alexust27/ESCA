@@ -17,14 +17,16 @@ public:
     /// @param f - основная функция
     bool VisitFunctionDecl( clang::FunctionDecl *f );
 
+//    bool VisitValueDecl( clang::ValueDecl *VD );
+//    bool VisitClassDecl(clang::ClassScopeFunctionSpecializationDecl *f);
 private:
     /// @brief Получение сторки с названием файла и номером строки в нем, где находится состояние
     /// @param st - состояние
     std::string getLocation( const clang::Stmt *st );
 
     /// @brief Метод для посещения функции
-    /// @param f - основная функция
-    bool ProcessFunction( clang::FunctionDecl *f );
+    /// @param functionDecl - основная функция
+    bool ProcessFunction( clang::FunctionDecl *functionDecl );
 
     /// @brief Проверяет тип состояния (stmt) и выполняет действие в зависимости от него
     /// @param stmt - состояние которое нужно проверить
@@ -91,7 +93,7 @@ private:
 //    std::map<std::string, std::set<std::string>> classToVars;
 
     bool isInDestruct = false;
-    bool isInConstructor = true;
+    bool isInConstructor = false;
 //    z3::context z3contex;
 
 };

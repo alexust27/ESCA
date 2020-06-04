@@ -33,6 +33,18 @@ bool ESCAASTVisitor::VisitFunctionDecl( clang::FunctionDecl *f )
     return ProcessFunction(f);
 }
 
+//bool ESCAASTVisitor::VisitValueDecl( clang::ValueDecl *VD )
+//{
+////    if( auto fld = clang::dyn_cast<clang::FieldDecl>(VD))
+////    {
+////        auto classVarName = fld->getDeclName().getAsString();
+////        auto className = fld->getQualifiedNameAsString();
+////        className.resize(className.length() - classVarName.length() - 2);
+////        classToVars[ className ].insert(classVarName);
+////    }
+//    return RecursiveASTVisitor::VisitValueDecl(VD);
+//}
+
 
 std::string ESCAASTVisitor::getLocation( const clang::Stmt *st )
 {
@@ -40,41 +52,21 @@ std::string ESCAASTVisitor::getLocation( const clang::Stmt *st )
     return loc.printToString(*currSM);
 }
 
-bool ESCAASTVisitor::ProcessFunction( clang::FunctionDecl *f )
+bool ESCAASTVisitor::ProcessFunction( clang::FunctionDecl *functionDecl )
 {
-    astContext = &f->getASTContext();
-    std::string funName = f->getNameInfo().getName().getAsString();
-//    std::string funName = f->getQualifiedNameAsString();
+    astContext = &functionDecl->getASTContext();
+    std::string funName = functionDecl->getNameInfo().getName().getAsString();
 
     ////////////
-    clang::SourceManager &sm = f->getASTContext().getSourceManager();
+    clang::SourceManager &sm = functionDecl->getASTContext().getSourceManager();
     currSM = &sm;
-    auto loc = f->getLocation();
-    auto lstr = loc.printToString(sm);
-//    clang::SourceLocation::getFromPtrEncoding(loc.getPtrEncoding()).print(llvm::nulls(), sm);
-
-
-//    if( Options::Instance().needFast && lstr.find(Options::Instance().analyzeFile) == std::string::npos )
-//    {
-//        return true;
-//    }
-
-//    if( Options::Instance().InIncludeDirs(lstr))
-//    {
-//        return true;
-//    }
-
-//    std::cout << lstr << std::endl;
-
-    /////////
-
-//    std::string funName = f->getName();
+    auto lstr = functionDecl->getLocation().printToString(sm);
 
 //    f->dump();
-    auto body = f->getBody();
+    auto body = functionDecl->getBody();
     if( body != nullptr )
     {
-        if( !f->isGlobal())
+        if( !functionDecl->isGlobal())
         {
             static int num = 0;
             staticFuncMapping[ funName ] = funName + std::to_string(num);
@@ -99,7 +91,7 @@ bool ESCAASTVisitor::ProcessFunction( clang::FunctionDecl *f )
         {
             if( isInDestruct || isInConstructor )
             {
-                DefectStorage::Instance().AddDefect(f->getQualifiedNameAsString(), lstr);
+                DefectStorage::Instance().AddDefect(functionDecl->getQualifiedNameAsString(), lstr);
             }
             context.throwsFunctions.insert({funName, context.GetException()});
             context.curFunction->SetException(context.GetException());
@@ -203,10 +195,27 @@ bool ESCAASTVisitor::ProcessStmt( clang::Stmt *stmt )
 //        std::cout << "while" << std::endl;
         ProcessStmt(cycle->getBody());
     }
-    else if( auto cycle2 = dyn_cast<ForStmt>(stmt))
+    else if( auto forCycle = dyn_cast<ForStmt>(stmt))
     {
-//        std::cout << "while" << std::endl;
-        ProcessStmt(cycle2->getBody());
+        auto cond = dyn_cast<BinaryOperator>(forCycle->getCond());
+        if( cond )
+        {
+            bool flag = cond->getRHS()->isIntegerConstantExpr(*astContext);
+            if( flag )
+            {
+                Expr::EvalResult res;
+                int64_t tmp = context.ForCounter;
+                cond->getRHS()->EvaluateAsInt(res,*astContext);
+                context.ForCounter = tmp * (res.Val.getInt().getExtValue());
+                ProcessStmt(forCycle->getBody());
+                context.ForCounter = tmp;
+            }
+        }
+        else
+        {
+            ProcessStmt(forCycle->getBody());
+        }
+
     }
     else if( auto rhsRefExpr = dyn_cast<CallExpr>(stmt))
     {

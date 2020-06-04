@@ -2,15 +2,12 @@
 #define ASTWalker_h
 
 
-#include <clang/Lex/HeaderSearchOptions.h>
-#include <clang/AST/Stmt.h>
 #include <clang/Frontend/TextDiagnosticPrinter.h>
-#include <clang/Frontend/CompilerInstance.h>
+#include "clang/Frontend/CompilerInstance.h"
 #include <clang/Lex/HeaderSearchOptions.h>
 #include <clang/Lex/Preprocessor.h>
 #include <clang/Lex/PreprocessorOptions.h>
 #include "ESCAASTConsumer.h"
-
 
 class ASTWalker
 {
@@ -36,13 +33,11 @@ public:
 #endif
 
 protected:
-#ifdef TEXT_DIAG
 
     /// @brief Добавляет файлы где искать include библиотеки используемые в проекте
     /// @param paths - список директорий, содержащих библиотеки
     void SetIncludeDirectories( const std::vector<std::string> &paths );
 
-#endif
 
     std::shared_ptr<clang::HeaderSearchOptions> headerSearchOptions;
     std::unique_ptr<clang::ASTContext> astContext;

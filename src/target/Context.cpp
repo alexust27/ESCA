@@ -50,7 +50,7 @@ void Context::AddFunction( const std::string &name )
 //        ++fNum;
 //    }
     curFunction = new Function(funName);
-    // FIXME: тут возникают коллизии если у функций одинаковые названия и они в разных файлах
+    // тут могут возникать коллизии если у функций одинаковые названия и они в разных файлах
     allFunctions[ funName ] = curFunction;
 }
 
@@ -83,11 +83,6 @@ void Context::PopCompound()
     compoundStatementsStack.pop_back();
 }
 
-
-std::map<std::string, Target::Function *> *Context::GetAllFunction()
-{
-    return &allFunctions;
-}
 
 void Context::AddFreeFunction( const std::string &function )
 {
@@ -142,7 +137,9 @@ void Context::CreateThrow( const std::string &eName )
 bool Context::CreateTryStatement()
 {
     if( compoundStatementsStack.size() > 4 )
+    {
         return false;
+    }
     auto tryBlock = new CompoundStatement();
     auto catchBlock = new CompoundStatement();
     auto trySt = new TryStatement(tryBlock, catchBlock);
@@ -166,12 +163,13 @@ void Context::CreateCatchStatement()
     compoundStatementsStack.push_back(tryStmt->catchSt);
 }
 
-
-//Statement* getLastPoped() {
-//    auto tmp = lastPoped;
-//    lastPoped = nullptr;
-//    return tmp;
-//}
-
+Context::~Context()
+{
+    for( auto& f : allFunctions )
+    {
+        delete f.second;
+    }
+    allFunctions.clear();
+}
 
 }

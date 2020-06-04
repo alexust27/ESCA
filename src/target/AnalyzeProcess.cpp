@@ -14,7 +14,6 @@
 
 AnalyzeProcess::AnalyzeProcess()
 {
-    allFunctions = Context::Instance().GetAllFunction();
     processContext = nullptr;
 //    allocatedFunctions.insert(std::string("malloc"));
 //    allocatedFunctions.insert(std::string("socket"));
@@ -25,15 +24,17 @@ AnalyzeProcess::AnalyzeProcess()
 void AnalyzeProcess::StartAnalyze()
 {
     std::cout << "Start analyze." << std::endl;
-    for( const auto &f : *allFunctions )
+    for( const auto &f : Context::Instance().allFunctions )
     {
         ProcessFunction(f.second);
     }
-    for( auto &f : *allFunctions )
+//    Context::Instance()
+    for( auto &f : Context::Instance().allFunctions )
     {
         delete f.second;
         f.second = nullptr;
     }
+
 }
 
 void AnalyzeProcess::ProcessFunction( Target::Function *function )
@@ -48,8 +49,8 @@ void AnalyzeProcess::ProcessFunction( Target::Function *function )
     // process all callee
     for( const auto &c : function->callee )
     {
-        auto calleeFun = allFunctions->find(c);
-        if( calleeFun == allFunctions->end())
+        auto calleeFun = Context::Instance().allFunctions.find(c);
+        if( calleeFun == Context::Instance().allFunctions.end())
         {
             // unknown function
             continue;

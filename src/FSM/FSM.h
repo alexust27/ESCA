@@ -134,6 +134,7 @@ private:
 
     /// @brief Все ребра (переходы) автомата
     std::vector<TransitionFSM> transitions;
+
     int iSat;
 
     const std::string EPSILON = "";

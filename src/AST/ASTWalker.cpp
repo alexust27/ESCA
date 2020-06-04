@@ -1,6 +1,5 @@
 #include <clang/Basic/SourceManager.h>
 #include <clang/Basic/Builtins.h>
-#include <clang/Frontend/CompilerInvocation.h>
 #include <clang/Frontend/CompilerInstance.h>
 #include <clang/Frontend/TextDiagnosticPrinter.h>
 #include <clang/Frontend/FrontendOptions.h>
@@ -141,7 +140,6 @@ bool ASTWalker::WalkAST( const std::string &fileName )
     return true;
 }
 
-#ifdef TEXT_DIAG
 
 void ASTWalker::SetIncludeDirectories( const std::vector<std::string> &paths )
 {
@@ -151,7 +149,6 @@ void ASTWalker::SetIncludeDirectories( const std::vector<std::string> &paths )
     }
 }
 
-#endif
 
 void ASTWalker::WalkAST( const std::vector<std::string> &files )
 {

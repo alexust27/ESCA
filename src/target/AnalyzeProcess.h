@@ -50,9 +50,6 @@ private:
     /// @brief Множество функции которые возвращают указатель на выделенную память
     std::set<std::string> allocatedFunctions;
 
-    /// @brief Указатель на все функции
-    std::map<std::string, Function *> *allFunctions;
-
     /// @brief Уникальный контекст для одной функции
     std::unique_ptr<ProcessContext> processContext;
 };

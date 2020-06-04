@@ -69,7 +69,7 @@ public:
 
     CompoundStatement::IsInOptions GetOptions() const;
 
-    virtual ~CompoundStatement()
+    ~CompoundStatement() override
     {
         for( auto s : statements )
         {
@@ -101,7 +101,8 @@ public:
     std::string loc;
 };
 
-
+/// auto* varName, auto * rhsName;
+/// varName = rhsName;
 class VarAssigmentFromPointerStatement : public Statement
 {
 public:
@@ -119,7 +120,7 @@ public:
     bool isDecl;
 };
 
-/// auto x = new X;
+/// x = new X;
 class VarAssigmentNewStatement : public Statement
 {
 public:
@@ -176,12 +177,10 @@ public:
         return STATEMENTS::IF;
     }
 
-    virtual ~IfStatement()
+    ~IfStatement() override
     {
-        if( elseSt )
-            delete elseSt;
-        if( thenSt )
-            delete thenSt;
+        delete elseSt;
+        delete thenSt;
     }
 
     CompoundStatement *thenSt = nullptr;
@@ -203,12 +202,10 @@ public:
         return STATEMENTS::TRY;
     }
 
-    virtual ~TryStatement()
+    ~TryStatement() override
     {
-        if( trySt )
-            delete trySt;
-        if( catchSt )
-            delete catchSt;
+        delete trySt;
+        delete catchSt;
     }
 
 

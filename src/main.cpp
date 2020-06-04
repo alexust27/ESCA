@@ -126,7 +126,6 @@ int main( int argc, char **argv )
     }
 
     std::vector<std::string> paths;
-#ifdef TEXT_DIAG
     paths = {
             "/usr/include/",
             "/usr/include/c++/9/",
@@ -135,7 +134,6 @@ int main( int argc, char **argv )
             "/usr/lib/gcc/x86_64-linux-gnu/9/include/",
 //            "/usr/lib/llvm-10/include/",
     };
-#endif
     ASTWalker walker(paths);
 
 
